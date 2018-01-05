@@ -15,7 +15,7 @@ pushd "${USER_DIRECTORY}" > /dev/null
     mkdir -p files crl csr private newcerts
     chmod 700 files
 
-    echo "${PASSWORD}" > "files/${USER_NAME}.password"
+    echo -n "${PASSWORD}" > "files/${USER_NAME}.password"
     openssl genrsa -aes256 -out "files/${USER_NAME}.key" -passout "file:files/${USER_NAME}.password" 2048 &> /dev/null
 
     openssl req \
