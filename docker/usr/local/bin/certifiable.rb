@@ -50,7 +50,7 @@ get '/servers/:server/:file' do
 end
 
 post '/servers/:server' do
-    `/usr/local/bin/server.sh #{params['server']} "#{params['cn']}" #{SecureRandom.hex}`
+    `/usr/local/bin/server.sh #{params['server']} "#{params['cn']}" #{SecureRandom.hex(3)}`
 end
 
 get '/users' do
@@ -70,7 +70,7 @@ get '/users/:user/:file' do
 end
 
 post '/users/:user' do
-    `/usr/local/bin/user.sh #{params['user']} "#{params['cn']}" #{SecureRandom.hex}`
+    `/usr/local/bin/user.sh #{params['user']} "#{params['cn']}" #{SecureRandom.hex(3)}`
 end
 
 def files(path)
