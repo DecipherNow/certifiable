@@ -20,7 +20,7 @@ pushd "${SERVER_DIRECTORY}" > /dev/null
     mkdir -p files crl csr newcerts
     chmod 700 files
 
-    echo "${PASSWORD}" > "files/${SERVER_NAME}.password"
+    echo -n "${PASSWORD}" > "files/${SERVER_NAME}.password"
     openssl genrsa -aes256 -out "files/${SERVER_NAME}.key" -passout "file:files/${SERVER_NAME}.password" 2048 &> /dev/null
     openssl rsa -in "files/${SERVER_NAME}.key" -out "files/${SERVER_NAME}.nopass.key" -passin "file:files/${SERVER_NAME}.password"
 
