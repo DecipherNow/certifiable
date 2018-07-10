@@ -4,7 +4,8 @@ set -e
 
 export USER_NAME="${1}"
 export COMMON_NAME="${2}"
-export PASSWORD="${3}"
+export PROGRAM="${3}"
+export PASSWORD="${4}"
 export USER_DIRECTORY="/usr/local/var/certifiable/users/${USER_NAME}"
 export INTERMEDIATE_DIRECTORY="/usr/local/var/certifiable/intermediate"
 
@@ -23,7 +24,7 @@ pushd "${USER_DIRECTORY}" > /dev/null
         -key "files/${USER_NAME}.key" \
         -out "${INTERMEDIATE_DIRECTORY}/csr/${USER_NAME}.csr" \
         -passin "file:files/${USER_NAME}.password" \
-        -subj "/C=US/ST=Virginia/L=Alexandria/O=Decipher Technology Studios/OU=Engineering/CN=${COMMON_NAME}"
+        -subj "/C=US/O=U.S. Government/OU=DI2E/OU=People/OU=${PROGRAM}/CN=${COMMON_NAME}"
 
     pushd "${INTERMEDIATE_DIRECTORY}" > /dev/null
 

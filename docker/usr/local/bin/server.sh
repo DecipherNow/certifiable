@@ -7,7 +7,8 @@ source /usr/local/lib/templates.sh
 export SERVER_NAME="${1}"
 export SUBJECT_ALT_NAME="${SERVER_NAME}"
 export COMMON_NAME="${2}"
-export PASSWORD="${3}"
+export PROGRAM="${3}"
+export PASSWORD="${4}"
 export SERVER_DIRECTORY="/usr/local/var/certifiable/servers/${SERVER_NAME}"
 export INTERMEDIATE_DIRECTORY="/usr/local/var/certifiable/intermediate"
 
@@ -31,7 +32,7 @@ pushd "${SERVER_DIRECTORY}" > /dev/null
         -key "files/${SERVER_NAME}.key" \
         -out "${INTERMEDIATE_DIRECTORY}/csr/${SERVER_NAME}.csr" \
         -passin "file:files/${SERVER_NAME}.password" \
-        -subj "/C=US/ST=Virginia/L=Alexandria/O=Decipher Technology Studios/OU=Engineering/CN=${COMMON_NAME}"
+        -subj "/C=US/O=U.S. Government/OU=DI2E/OU=Server/OU=${PROGRAM}/CN=${COMMON_NAME}"
 
     pushd "${INTERMEDIATE_DIRECTORY}" > /dev/null
 
