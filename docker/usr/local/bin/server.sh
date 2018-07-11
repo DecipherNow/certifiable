@@ -64,6 +64,12 @@ pushd "${SERVER_DIRECTORY}" > /dev/null
 
     rm "files/${SERVER_NAME}.password.tmp"
 
+    pushd files > /dev/null
+
+        tar -cvf ${SERVER_NAME}.tar *
+
+    popd > /dev/null
+
 #    keytool -importcert \
 #        -noprompt \
 #        -trustcacerts \
