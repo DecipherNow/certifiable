@@ -56,4 +56,10 @@ pushd "${USER_DIRECTORY}" > /dev/null
 
     rm "files/${USER_NAME}.password.tmp"
 
+    pushd files > /dev/null
+
+      tar -cvf ${USER_NAME}.tar *
+
+    popd > /dev/null
+
 popd > /dev/null
