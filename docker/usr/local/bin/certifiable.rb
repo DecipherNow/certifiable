@@ -50,7 +50,7 @@ get '/servers/:server/:file' do
 end
 
 post '/servers/:server' do
-    `/usr/local/bin/server.sh #{params['server']} "#{params['cn']}" #{SecureRandom.hex(3)}`
+    `/usr/local/bin/server.sh #{params['server']} "#{params['cn']}" #{SecureRandom.hex(3)} "#{params['san']}"`
 end
 
 get '/users' do
