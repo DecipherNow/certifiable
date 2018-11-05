@@ -7,9 +7,11 @@ templates.render() {
 
     cp "${source}" "${destination}"
 
+    count=1
     for variable in ${variables[@]}
     do
         value="${!variable}"
-        sed -i.bak 's=%{'"${variable}"'}='"${value}"'=g' "${destination}"
+        if [ "$value" != "" ]; then sed -i.bak '$aDNS.'"$count"' = '"${value}" "${destination}"; fi
+        count=$((count+1))
     done
 }

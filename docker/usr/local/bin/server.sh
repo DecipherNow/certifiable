@@ -9,29 +9,30 @@ export SUBJECT_ALT_NAME="${SERVER_NAME}"
 export COMMON_NAME="${2}"
 export PROGRAM="${3}"
 export PASSWORD="${4}"
-export SERVER_DIRECTORY="/usr/local/var/certifiable/servers/${SERVER_NAME}"
+export SUBJECT_ALT_NAME_1="${5}"
+export SERVER_DIRECTORY="/usr/local/var/certifiable/servers/${COMMON_NAME}"
 export INTERMEDIATE_DIRECTORY="/usr/local/var/certifiable/intermediate"
 
 mkdir -p "${SERVER_DIRECTORY}"
 
 pushd "${SERVER_DIRECTORY}" > /dev/null
 
-    templates.render /usr/local/var/certifiable/templates/server.conf server.conf SUBJECT_ALT_NAME
+    templates.render /usr/local/var/certifiable/templates/server.conf server.conf SUBJECT_ALT_NAME SUBJECT_ALT_NAME_1
 
     mkdir -p files crl csr newcerts
     chmod 700 files
 
-    echo -n "${PASSWORD}" > "files/${SERVER_NAME}.password"
-    openssl genrsa -aes256 -out "files/${SERVER_NAME}.key" -passout "file:files/${SERVER_NAME}.password" 2048 &> /dev/null
-    openssl rsa -in "files/${SERVER_NAME}.key" -out "files/${SERVER_NAME}.nopass.key" -passin "file:files/${SERVER_NAME}.password"
+    echo -n "${PASSWORD}" > "files/${COMMON_NAME}.password"
+    openssl genrsa -aes256 -out "files/${COMMON_NAME}.key" -passout "file:files/${COMMON_NAME}.password" 2048 &> /dev/null
+    openssl rsa -in "files/${COMMON_NAME}.key" -out "files/${COMMON_NAME}.nopass.key" -passin "file:files/${COMMON_NAME}.password"
 
 
     openssl req \
         -new \
         -config server.conf \
-        -key "files/${SERVER_NAME}.key" \
-        -out "${INTERMEDIATE_DIRECTORY}/csr/${SERVER_NAME}.csr" \
-        -passin "file:files/${SERVER_NAME}.password" \
+        -key "files/${COMMON_NAME}.key" \
+        -out "${INTERMEDIATE_DIRECTORY}/csr/${COMMON_NAME}.csr" \
+        -passin "file:files/${COMMON_NAME}.password" \
         -subj "/C=US/O=U.S. Government/OU=DI2E/OU=Server/OU=${PROGRAM}/CN=${COMMON_NAME}"
 
     pushd "${INTERMEDIATE_DIRECTORY}" > /dev/null
@@ -43,30 +44,30 @@ pushd "${SERVER_DIRECTORY}" > /dev/null
             -days 3650 \
             -notext \
             -md sha256 \
-            -in "csr/${SERVER_NAME}.csr" \
-            -out "${SERVER_DIRECTORY}/files/${SERVER_NAME}.crt" \
+            -in "csr/${COMMON_NAME}.csr" \
+            -out "${SERVER_DIRECTORY}/files/${COMMON_NAME}.crt" \
             -passin file:private/intermediate.password
 
     popd > /dev/null
 
-    cat "files/${SERVER_NAME}.crt" "${INTERMEDIATE_DIRECTORY}/certs/intermediate.chain.crt" > "files/${SERVER_NAME}.chain.crt"
+    cat "files/${COMMON_NAME}.crt" "${INTERMEDIATE_DIRECTORY}/certs/intermediate.chain.crt" > "files/${COMMON_NAME}.chain.crt"
 
-    cp "files/${SERVER_NAME}.password" "files/${SERVER_NAME}.password.tmp"
+    cp "files/${COMMON_NAME}.password" "files/${COMMON_NAME}.password.tmp"
 
     openssl pkcs12 \
         -export \
-        -in "files/${SERVER_NAME}.chain.crt" \
-        -inkey "files/${SERVER_NAME}.key" \
-        -out "files/${SERVER_NAME}.p12" \
+        -in "files/${COMMON_NAME}.chain.crt" \
+        -inkey "files/${COMMON_NAME}.key" \
+        -out "files/${COMMON_NAME}.p12" \
         -name "${COMMON_NAME}" \
-        -passin "file:files/${SERVER_NAME}.password" \
-        -passout "file:files/${SERVER_NAME}.password.tmp"
+        -passin "file:files/${COMMON_NAME}.password" \
+        -passout "file:files/${COMMON_NAME}.password.tmp"
 
-    rm "files/${SERVER_NAME}.password.tmp"
+    rm "files/${COMMON_NAME}.password.tmp"
 
     pushd files > /dev/null
 
-        tar -cvf ${SERVER_NAME}.tar *
+        tar -cvf ${COMMON_NAME}.tar *
 
     popd > /dev/null
 
