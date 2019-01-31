@@ -38,3 +38,7 @@ The following table describes the endpoints exposed by the certificate authority
 | GET    | /users/:user                     | List the certificate files for a user.      |
 | POST   | /users/:user?cn=:common_name     | Creates certificates for user.              |
 | GET    | /users/:user/:file               | Download a certificate file for a user.     |
+
+## Discussion and Examples
+
+https://forums.deciphernow.com/t/update-expired-localhost-pki-certificate-steps/625
