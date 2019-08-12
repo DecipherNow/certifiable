@@ -1,44 +1,78 @@
 # Certifiable
 
-A completely untrustworthy certificate authority and tooling for making development with certificates easy.
+A command line utility for generating single use certificate authorities and issuing certificates.
 
 ## Overview
 
-This repository provides the scripts required to build a self contained certificate authority that provides an HTTP API for creating and retrieving server and user certificates.
-
-## Building
-
-To build and push the certificate authority image run the following command from the root directory of this repository:
-
-    ./publish
-
-## Running
-
-To run the certificate authority simply execute the following:
-
-    docker run -p 4567:4567 deciphernow/certifiable:latest
-    
-This will start the certificate authority container and expose the HTTP API on port [http://localhost:4567](http://localhost:4567).
+There are a number of situations in which having an ephemeral certificate authority is sufficient or optimal. Certifiable fills this role by generating a new certificate authority on every run and issuing the requested certificates from that authority. None of the authority's cryptographic key material is persisted to disk so once the run completes no additional certificates can be issued by that certificate authority.
 
 ## Usage
 
-The following table describes the endpoints exposed by the certificate authority API.
+### Installation
 
-| Method | Endpoint                         | Description                                 |
-|--------|----------------------------------|---------------------------------------------|
-| GET    | /root                            | List the root certificate files.            |
-| GET    | /root/:file                      | Download a root certificate file.           |
-| GET    | /intermediate                    | List the intermediate certificate files.    |
-| GET    | /intermediate/:file              | Download an intermediate certificate file.  |
-| GET    | /servers                         | List the servers with certificates.         |
-| GET    | /servers/:server                 | List the certificate files for a server.    |
-| POST   | /servers/:server?cn=:common_name | Creates certificates for server.            |
-| GET    | /servers/:server/:file           | Download a certificate file for a server.   |
-| GET    | /users                           | List the users with certificates.           |
-| GET    | /users/:user                     | List the certificate files for a user.      |
-| POST   | /users/:user?cn=:common_name     | Creates certificates for user.              |
-| GET    | /users/:user/:file               | Download a certificate file for a user.     |
+### Single
+In order to generate a single certificate run the following command.
 
-## Discussion and Examples
+```
+certifiable issue single -c localhost -a localhost -a localhost.localdomain -e 86000s
+```
 
-https://forums.deciphernow.com/t/update-expired-localhost-pki-certificate-steps/625
+This will create the following files in the current directory.
+
+| File             | Description                                       |
+|------------------|---------------------------------------------------|
+| root.crt         | The PEM encoded root certificate.                 |
+| intermediate.crt | The PEM encoded intermediate certificate.         |
+| localhost.crt    | The PEM encoded server certificate for localhost. |
+| localhost.key    | The PEM encoded server key for localhost.         |
+
+### Batch
+In order to generate a multiple certificates run the following command.
+
+```
+certifiable issue batch --config ./config.json
+```
+
+Where `config.json` contains the following content.
+
+```
+[
+	{
+		"commonName": "localhost",
+		"alternativeNames": [
+			"localhost",
+			"localhost.localdomain"
+		],
+		"expires": "24h"
+	},
+	{
+		"commonName": "example.com",
+		"alternativeNames": [
+			"example.com",
+			"www.example.com"
+		],
+		"expires": "1h"
+	}
+]
+```
+
+This will create the following files in the current directory.
+
+| File             | Description                                         |
+|------------------|-----------------------------------------------------|
+| root.crt         | The PEM encoded root certificate.                   |
+| intermediate.crt | The PEM encoded intermediate certificate.           |
+| localhost.crt    | The PEM encoded server certificate for localhost.   |
+| localhost.key    | The PEM encoded server key for localhost.           |
+| example.com.crt  | The PEM encoded server certificate for example.com. |
+| example.com.key  | The PEM encoded server key for example.com.         |
+
+## Development
+
+### Prerequisites
+
+### Building
+
+### Testing
+
+### Deploying
