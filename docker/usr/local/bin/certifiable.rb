@@ -11,6 +11,8 @@ ROOT_CERTS_DIRECTORY = File.join(VAR_DIRECTORY, 'root', 'certs')
 SERVERS_PATH = File.join(VAR_DIRECTORY, 'servers')
 USERS_PATH = File.join(VAR_DIRECTORY, 'users')
 
+SET_SERIAL_RESULT = `/usr/local/bin/setserial.sh`
+
 get '/intermediate' do
     content_type :json
     files(INTERMEDIATE_CERTS_DIRECTORY).to_json
